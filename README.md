@@ -1,4 +1,4 @@
-# 📖 Complete Technical Documentation: Credit Risk Pipeline
+# 📖 Credit Risk Pipeline
 
 This document outlines the end-to-end framework, methodology, and execution phases implemented within the credit risk prediction pipeline.
 
