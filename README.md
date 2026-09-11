@@ -1,27 +1,46 @@
 # Credit Risk Probability of Default (PD) Scorecard Pipeline
 
 ## Overview
-This repository contains an end-to-end credit risk analytics and modeling pipeline developed in Python. The project focuses on building a traditional credit risk scorecard to predict customer default risk, incorporating rigorous data quality checks, stratified data partitioning, and feature binning for Weight of Evidence (WoE) and Information Value (IV) transformations.
+This repository contains an end-to-end quantitative credit risk analytics and modeling pipeline developed in Python. The project implements a traditional credit risk scorecard to predict customer default risk, featuring rigorous data quality audits, stratified data partitioning, distribution-based feature binning, Weight of Evidence (WoE) transformations, and Logistic Regression modeling coupled with production-grade stability monitoring.
 
-## Key Pipeline Components
+---
 
-### 1. Dataset & Target Analysis
-* **Portfolio Scope**: Processes a structured credit dataset containing 100 customer records and 34 variables[cite: 1].
-* **Target Distribution**: Analyzes the binary target variable (`Default_y`), establishing an overall portfolio default rate of $30.0\%$ ($70\%$ non-defaults vs. $30\%$ defaults)[cite: 1].
-* **Risk Segmentation**: Evaluates default distributions across demographic and behavioral factors, including education level, marital status, and historical payment behavior[cite: 1].
+## Complete Pipeline Architecture
+
+### 1. Dataset Overview & Characteristics
+* **Dataset Shape**: Processes a structured credit portfolio containing 100 customer records and 34 variables[cite: 1].
+* **Feature Composition**: Integrates numerical predictors (Age, Income, Loan Amount, Savings Balance, Employment Years) with categorical attributes (`Marital_Status`, `Education_Level`, `Pay_History`)[cite: 1].
+* **Target Variable**: Evaluates the binary default indicator (`Default_y`), establishing an overall portfolio default rate of $30.0\%$[cite: 1].
+* **Demographic Risk Segmentation**: Analyzes default risk variations across education levels (e.g., PhD holders at $41.67\%$, Postgraduates at $10.00\%$), marital statuses, and historical payment behavior[cite: 1].
 
 ### 2. Data Quality & Preprocessing
-* **Integrity Audits**: Validates dataset cleanliness, confirming zero duplicate rows or customer ID collisions[cite: 1].
-* **Missing Value Imputation**: Systematically handles missing categorical attributes by mapping them to dedicated distinct categories to preserve sample size and information value[cite: 1].
+* **Integrity Audits**: Performs systematic checks confirming 0 duplicate rows and zero customer ID collisions[cite: 1].
+* **Missing Value Imputation**: Systematically handles missing categorical attributes by mapping them to dedicated distinct categories to preserve sample integrity[cite: 1].
 
 ### 3. Stratified Data Partitioning
-* **Train-Test Split**: Implements a stratified 70/30 split (70 training samples, 30 test samples) on the target variable[cite: 1].
-* **Risk Preservation**: Ensures identical target proportions are maintained across subsets ($21$ default instances in training and $9$ in testing) to prevent portfolio risk distortion[cite: 1].
+* **Train-Test Split**: Implements a stratified 70/30 split (70 training samples, 30 test samples) on the binary target variable[cite: 1].
+* **Risk Preservation**: Guarantees identical target proportions across subsets ($21$ default instances in training and $9$ in testing) to maintain population risk representation[cite: 1].
 
-### 4. Feature Engineering & Scorecard Foundations
-* **Continuous Feature Binning**: Groups continuous numerical predictors (such as Age, Income, Employment Years, and Loan Amount) into distribution-based intervals[cite: 1].
-* **Scorecard Preparation**: Prepares binned attributes for downstream Weight of Evidence (WoE) transformation and Information Value (IV) feature selection.
+### 4. Feature Binning & Scorecard Foundations
+* **Continuous Feature Binning**: Groups continuous numerical attributes (Age, Income, Loan Amount) into distribution-based intervals[cite: 1].
+* **Scorecard Preparation**: Prepares binned features for downstream Information Value (IV) calculation and monotonic transformation.
 
-## Tech Stack
-* **Language**: Python
-* **Libraries**: Pandas, NumPy, Scikit-Learn, Statsmodels
+### 5. Weight of Evidence (WoE) & Information Value (IV)
+* **WoE Transformation**: Converts categorical and binned numerical features into continuous Weight of Evidence values to linearize relationships with the target log-odds.
+* **Feature Selection (IV)**: Computes Information Value to rank and select predictive features, discarding low-signal variables to prevent overfitting.
+
+### 6. Logistic Regression & Probability of Default (PD) Modeling
+* **Model Training**: Fits a generalized linear model (Logistic Regression) on WoE-transformed features to estimate the log-odds of default.
+* **Probability Scaling**: Converts model outputs into calibrated Probability of Default (PD) estimates and maps them to standard credit score ranges (score scaling).
+
+### 7. Model Validation & Stability Monitoring
+* **Discriminatory Power**: Evaluates model ranking capability using **ROC-AUC** and the **Kolmogorov-Smirnov (KS)** statistic.
+* **Gini Coefficient**: Computes the Gini index ($2 \times \text{AUC} - 1$) to quantify classification accuracy.
+* **Population Stability Index (PSI)**: Monitors score distribution shifts between training and test (or production) datasets to detect model drift over time.
+
+---
+
+## Tech Stack & Libraries
+* **Language**: Python 3.x
+* **Data Manipulation & Wrangling**: Pandas, NumPy
+* **Statistical Modeling & Machine Learning**: Scikit-Learn, Statsmodels
